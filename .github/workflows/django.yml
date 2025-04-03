@@ -27,6 +27,5 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        cd todo
         python manage.py makemigrations
         python manage.py migrate
