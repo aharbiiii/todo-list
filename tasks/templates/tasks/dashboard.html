@@ -1,0 +1,66 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Your Tasks</h2>
+
+<form method="POST" style="margin-bottom: 20px;">
+    {% csrf_token %}
+    <label>Title:</label><br>
+    <input type="text" name="title" required><br><br>
+
+    <label>Description:</label><br>
+    <textarea name="description"></textarea><br><br>
+
+    <label>Label/Category:</label><br>
+    <input type="text" name="label"><br><br>
+
+    <button type="submit">Add Task</button>
+</form>
+
+{% if tasks %}
+    <ul>
+        {% for task in tasks %}
+            <li style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                <strong>{{ task.title }}</strong>
+                {% if task.status == 'Done' %}
+                    ✅
+                {% elif task.status == 'Cancelled' %}
+                    ❌ (Cancelled)
+                {% else %}
+                    🔄
+                {% endif %}
+                <br>
+
+                <small><strong>Description:</strong> {{ task.description }}</small><br>
+                <small><strong>Status:</strong> {{ task.status }}</small><br>
+                <small><strong>Label:</strong> {{ task.label }}</small><br>
+                <small><strong>Created:</strong> {{ task.created_on }}</small><br>
+                {% if task.completed_on %}
+                    <small><strong>Completed:</strong> {{ task.completed_on }}</small><br>
+                {% endif %}
+
+                {% if task.sub_tasks.all %}
+                    <ul>
+                        {% for sub in task.sub_tasks.all %}
+                            <li>
+                                <strong>{{ sub.title }}</strong> — {{ sub.status }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <form method="POST" action="{% url 'task_action' task.id %}" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <button name="action" value="done">Mark Done</button>
+                    <button name="action" value="cancel">Cancel</button>
+                    <button name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tasks yet. Add one above!</p>
+{% endif %}
+{% endblock %}
