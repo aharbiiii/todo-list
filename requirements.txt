@@ -1,6 +1,7 @@
 asgiref>=3.7.2
 Django>=4.2.9
 django-crispy-forms==2.3
+djangorestframework==3.16.0
 setuptools==75.8.0
 sqlparse>=0.4.4
 wheel==0.45.1
